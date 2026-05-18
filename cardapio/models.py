@@ -26,3 +26,6 @@ class ItemCardapio(models.Model):
 
     def __str__(self):
         return self.nome
+    
+def preco_formatado(self):
+    return f"R$ {self.preco:.2f}".replace('.', ',')
