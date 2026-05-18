@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 URL configuration for cardapio_restaurante project.
 
@@ -23,7 +22,7 @@ urlpatterns = [
 
     path('', include('cardapio.urls')),
 ]
-=======
+
 # cardapio_restaurante/urls.py  (urls do PROJETO)
 from django.contrib import admin
 from django.urls import path, include
@@ -38,4 +37,4 @@ urlpatterns = [
 # Serve arquivos de mídia (imagens) em desenvolvimento
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
->>>>>>> e52e147827374faca9c1550e8e413281bc3136cc
+
