@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.db.models import Prefetch
 from .models import Categoria, ItemCardapio
 from .forms import CategoriaForm, ItemCardapioForm
 
@@ -29,7 +30,30 @@ def cadastrar_categoria(request):
     else:
         form = CategoriaForm()
 
-    return render(request, 'cardapio/cadastro_categoria.html', {'form': form})
+    categorias = Categoria.objects.prefetch_related('itens').all()
+    return render(request, 'cardapio/cadastro_categoria.html', {
+        'form': form,
+        'categorias': categorias,
+    })
+
+
+def excluir_categoria(request, categoria_id):
+    categoria = get_object_or_404(Categoria, id=categoria_id)
+
+    if request.method != 'POST':
+        return redirect('cadastro_categoria')
+
+    if categoria.itens.exists():
+        messages.error(
+            request,
+            f'Não foi possível remover "{categoria.nome}" porque existem itens cadastrados nela. Remova os itens primeiro.'
+        )
+        return redirect('cadastro_categoria')
+
+    nome = categoria.nome
+    categoria.delete()
+    messages.success(request, f'Categoria "{nome}" removida com sucesso!')
+    return redirect('cadastro_categoria')
 
 
 def cadastrar_item(request):
@@ -44,4 +68,20 @@ def cadastrar_item(request):
     else:
         form = ItemCardapioForm()
 
-    return render(request, 'cardapio/cadastro_item.html', {'form': form})
+    itens = ItemCardapio.objects.select_related('categoria').order_by('categoria__ordem', 'categoria__nome', 'nome')
+    return render(request, 'cardapio/cadastro_item.html', {
+        'form': form,
+        'itens': itens,
+    })
+
+
+def excluir_item(request, item_id):
+    item = get_object_or_404(ItemCardapio, id=item_id)
+
+    if request.method != 'POST':
+        return redirect('cadastro_item')
+
+    nome = item.nome
+    item.delete()
+    messages.success(request, f'Item "{nome}" removido com sucesso!')
+    return redirect('cadastro_item')
