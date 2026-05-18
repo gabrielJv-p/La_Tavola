@@ -1,16 +1,13 @@
-
 {% extends "base.html" %}
 
 {% block title %}Cadastrar Categoria{% endblock %}
 
 {% block extra_head %}
 <style>
-  /* ── FORM LAYOUT ───────────────────────────────────────────── */
   .form-wrap {
     max-width: 560px;
     margin: 0 auto;
   }
-
   .page-title {
     text-align: center;
     margin-bottom: 2rem;
@@ -34,8 +31,6 @@
     letter-spacing: .4rem;
     margin: .8rem 0 1.8rem;
   }
-
-  /* ── CARD ──────────────────────────────────────────────────── */
   .form-card {
     background: #fff9f2;
     border: 1px solid var(--cream-dk);
@@ -43,8 +38,6 @@
     padding: 2.2rem 2.4rem;
     box-shadow: 0 4px 20px var(--shadow);
   }
-
-  /* ── FIELDS ────────────────────────────────────────────────── */
   .field-group {
     display: flex;
     flex-direction: column;
@@ -58,7 +51,6 @@
     color: var(--brown);
   }
   .field-group label .req { color: var(--red); margin-left: 2px; }
-
   .field-group input,
   .field-group select,
   .field-group textarea {
@@ -87,15 +79,11 @@
     color: var(--text-lt);
     font-style: italic;
   }
-
-  /* inline row for icone + ordem */
   .field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
   }
-
-  /* icone preview */
   .icone-preview {
     display: flex;
     align-items: center;
@@ -115,8 +103,6 @@
     flex-shrink: 0;
     transition: transform .15s;
   }
-
-  /* errors */
   .field-errors {
     margin-top: .3rem;
     display: flex;
@@ -130,8 +116,6 @@
   }
   .field-group input.is-invalid,
   .field-group select.is-invalid { border-color: var(--red); }
-
-  /* ── ACTIONS ───────────────────────────────────────────────── */
   .form-actions {
     display: flex;
     gap: 1rem;
@@ -141,8 +125,6 @@
     border-top: 1px dashed var(--parchment);
     flex-wrap: wrap;
   }
-
-  /* ── BACK LINK ─────────────────────────────────────────────── */
   .back-link {
     display: inline-flex;
     align-items: center;
@@ -155,6 +137,84 @@
     transition: color .2s;
   }
   .back-link:hover { color: var(--brown-dk); }
+
+  /* ── LISTA DE CATEGORIAS ───────────────────────────────────── */
+  .lista-section {
+    max-width: 560px;
+    margin: 2.5rem auto 0;
+  }
+  .lista-titulo {
+    font-family: 'IM Fell English SC', serif;
+    font-size: .85rem;
+    color: var(--text-lt);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--cream-dk);
+  }
+  .lista-vazia {
+    text-align: center;
+    color: var(--text-lt);
+    font-style: italic;
+    font-size: .9rem;
+    padding: 1.2rem 0;
+  }
+  .categoria-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .85rem 1.1rem;
+    background: #fff9f2;
+    border: 1px solid var(--cream-dk);
+    border-radius: 6px;
+    margin-bottom: .6rem;
+    gap: 1rem;
+  }
+  .categoria-info {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    flex: 1;
+    min-width: 0;
+  }
+  .categoria-icone {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .categoria-nome {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--brown-dk);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .categoria-ordem {
+    font-size: .75rem;
+    color: var(--text-lt);
+    font-style: italic;
+    flex-shrink: 0;
+  }
+  .btn-excluir {
+    background: none;
+    border: 1.5px solid var(--parchment);
+    border-radius: 4px;
+    color: var(--text-lt);
+    font-size: .78rem;
+    font-family: 'IM Fell English SC', serif;
+    letter-spacing: .05em;
+    padding: .3rem .7rem;
+    cursor: pointer;
+    transition: border-color .2s, color .2s, background .2s;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .btn-excluir:hover {
+    border-color: var(--red);
+    color: var(--red);
+    background: #fff0f0;
+  }
 
   @media (max-width: 500px) {
     .form-card { padding: 1.5rem 1.2rem; }
@@ -173,6 +233,22 @@
     <p>Organize o cardápio agrupando itens por tipo.</p>
   </div>
   <div class="ornament">✦ ✦ ✦</div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div style="
+        padding: .8rem 1rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        font-size: .88rem;
+        {% if message.tags == 'error' %}
+          background: #fff0f0; color: var(--red); border: 1px solid #f5c6c6;
+        {% else %}
+          background: #f0fff4; color: #276749; border: 1px solid #b2dfcb;
+        {% endif %}
+      ">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
 
   <div class="form-card">
     <form method="post" novalidate>
@@ -257,6 +333,33 @@
   </div>
 </div>
 
+<!-- LISTA DE CATEGORIAS -->
+<div class="lista-section">
+  <div class="lista-titulo">Categorias cadastradas</div>
+
+  {% if categorias %}
+    {% for categoria in categorias %}
+    <div class="categoria-item">
+      <div class="categoria-info">
+        <span class="categoria-icone">{{ categoria.icone|default:"🍽️" }}</span>
+        <span class="categoria-nome">{{ categoria.nome }}</span>
+      </div>
+      <span class="categoria-ordem">ordem {{ categoria.ordem }}</span>
+      <form method="post" action="{% url 'excluir_categoria' categoria.id %}" style="margin:0">
+        {% csrf_token %}
+        <button
+          type="submit"
+          class="btn-excluir"
+          onclick="return confirm('Remover a categoria "{{ categoria.nome }}"?')"
+        >Excluir</button>
+      </form>
+    </div>
+    {% endfor %}
+  {% else %}
+    <p class="lista-vazia">Nenhuma categoria cadastrada ainda.</p>
+  {% endif %}
+</div>
+
 <script>
   const iconeInput = document.getElementById('{{ form.icone.id_for_label }}');
   const iconeDisplay = document.getElementById('icone-display');
@@ -272,141 +375,3 @@
   updatePreview();
 </script>
 {% endblock %}
-
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastrar Categoria</title>
-
-    <style>
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        body {
-            background: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            width: 100%;
-            max-width: 500px;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 10px;
-            color: #c0392b;
-        }
-
-        .subtitulo {
-            text-align: center;
-            color: #777;
-            margin-bottom: 30px;
-        }
-
-        form p {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 20px;
-        }
-
-        label {
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #444;
-        }
-
-        input,
-        textarea,
-        select {
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-            font-size: 15px;
-        }
-
-        input:focus,
-        textarea:focus,
-        select:focus {
-            outline: none;
-            border-color: #c0392b;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            background: #c0392b;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background: #a93226;
-        }
-
-        .mensagem {
-            background: #d4edda;
-            color: #155724;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-    </style>
-</head>
-<body>
-
-    <div class="container">
-
-        <h1>Cadastro de Categoria</h1>
-
-        <p class="subtitulo">
-            Organize as categorias do cardápio do restaurante
-        </p>
-
-        {% if messages %}
-            {% for message in messages %}
-                <div class="mensagem">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        <form method="POST">
-
-            {% csrf_token %}
-
-            {{ form.as_p }}
-
-            <button type="submit">
-                Salvar Categoria
-            </button>
-
-        </form>
-
-    </div>
-
-</body>
-</html>
-
