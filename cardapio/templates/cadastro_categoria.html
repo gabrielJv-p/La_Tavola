@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastrar Categoria{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* ── FORM LAYOUT ───────────────────────────────────────────── */
+  .form-wrap {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .page-title {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .page-title h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--brown-dk);
+  }
+  .page-title h1 em { color: var(--red); font-style: italic; }
+  .page-title p {
+    font-size: .92rem;
+    color: var(--text-lt);
+    font-style: italic;
+    margin-top: .4rem;
+  }
+  .ornament {
+    text-align: center;
+    color: var(--gold);
+    font-size: .9rem;
+    letter-spacing: .4rem;
+    margin: .8rem 0 1.8rem;
+  }
+
+  /* ── CARD ──────────────────────────────────────────────────── */
+  .form-card {
+    background: #fff9f2;
+    border: 1px solid var(--cream-dk);
+    border-radius: 8px;
+    padding: 2.2rem 2.4rem;
+    box-shadow: 0 4px 20px var(--shadow);
+  }
+
+  /* ── FIELDS ────────────────────────────────────────────────── */
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+    margin-bottom: 1.4rem;
+  }
+  .field-group label {
+    font-family: 'IM Fell English SC', serif;
+    font-size: .85rem;
+    letter-spacing: .08em;
+    color: var(--brown);
+  }
+  .field-group label .req { color: var(--red); margin-left: 2px; }
+
+  .field-group input,
+  .field-group select,
+  .field-group textarea {
+    width: 100%;
+    padding: .7rem .95rem;
+    border: 1.5px solid var(--parchment);
+    border-radius: 4px;
+    background: var(--cream);
+    font-family: 'Lora', serif;
+    font-size: .95rem;
+    color: var(--text);
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+    appearance: none;
+  }
+  .field-group input:focus,
+  .field-group select:focus,
+  .field-group textarea:focus {
+    border-color: var(--brown-lt);
+    box-shadow: 0 0 0 3px rgba(139,102,66,.15);
+    background: #fffcf8;
+  }
+  .field-group input::placeholder { color: var(--parchment); font-style: italic; }
+  .field-group .hint {
+    font-size: .78rem;
+    color: var(--text-lt);
+    font-style: italic;
+  }
+
+  /* inline row for icone + ordem */
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  /* icone preview */
+  .icone-preview {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+  }
+  .icone-preview input { flex: 1; }
+  #icone-display {
+    width: 2.6rem;
+    height: 2.6rem;
+    background: var(--cream-dk);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    border: 1.5px solid var(--parchment);
+    flex-shrink: 0;
+    transition: transform .15s;
+  }
+
+  /* errors */
+  .field-errors {
+    margin-top: .3rem;
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+  }
+  .field-error {
+    font-size: .8rem;
+    color: var(--red);
+    font-style: italic;
+  }
+  .field-group input.is-invalid,
+  .field-group select.is-invalid { border-color: var(--red); }
+
+  /* ── ACTIONS ───────────────────────────────────────────────── */
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1.4rem;
+    border-top: 1px dashed var(--parchment);
+    flex-wrap: wrap;
+  }
+
+  /* ── BACK LINK ─────────────────────────────────────────────── */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    color: var(--brown-lt);
+    font-size: .88rem;
+    text-decoration: none;
+    margin-bottom: 1.2rem;
+    font-style: italic;
+    transition: color .2s;
+  }
+  .back-link:hover { color: var(--brown-dk); }
+
+  @media (max-width: 500px) {
+    .form-card { padding: 1.5rem 1.2rem; }
+    .field-row { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-wrap">
+
+  <a href="{% url 'cardapio_home' %}" class="back-link">← Voltar ao Cardápio</a>
+
+  <div class="page-title">
+    <h1>Nova <em>Categoria</em></h1>
+    <p>Organize o cardápio agrupando itens por tipo.</p>
+  </div>
+  <div class="ornament">✦ ✦ ✦</div>
+
+  <div class="form-card">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <!-- Nome -->
+      <div class="field-group">
+        <label for="{{ form.nome.id_for_label }}">
+          Nome da Categoria <span class="req">*</span>
+        </label>
+        <input
+          type="text"
+          name="{{ form.nome.html_name }}"
+          id="{{ form.nome.id_for_label }}"
+          value="{{ form.nome.value|default:'' }}"
+          placeholder="ex: Entradas, Pratos Principais…"
+          maxlength="100"
+          {% if form.nome.errors %}class="is-invalid"{% endif %}
+          required
+        >
+        {% if form.nome.errors %}
+        <div class="field-errors">
+          {% for e in form.nome.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Ícone + Ordem -->
+      <div class="field-row">
+
+        <!-- Ícone -->
+        <div class="field-group">
+          <label for="{{ form.icone.id_for_label }}">Ícone (emoji)</label>
+          <div class="icone-preview">
+            <input
+              type="text"
+              name="{{ form.icone.html_name }}"
+              id="{{ form.icone.id_for_label }}"
+              value="{{ form.icone.value|default:'' }}"
+              placeholder="🍽️"
+              maxlength="10"
+              {% if form.icone.errors %}class="is-invalid"{% endif %}
+            >
+            <div id="icone-display">🍽️</div>
+          </div>
+          <span class="hint">Cole um emoji aqui.</span>
+          {% if form.icone.errors %}
+          <div class="field-errors">
+            {% for e in form.icone.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Ordem -->
+        <div class="field-group">
+          <label for="{{ form.ordem.id_for_label }}">Ordem de exibição</label>
+          <input
+            type="number"
+            name="{{ form.ordem.html_name }}"
+            id="{{ form.ordem.id_for_label }}"
+            value="{{ form.ordem.value|default:'0' }}"
+            min="0"
+            placeholder="0"
+            {% if form.ordem.errors %}class="is-invalid"{% endif %}
+          >
+          <span class="hint">Menor número aparece primeiro.</span>
+          {% if form.ordem.errors %}
+          <div class="field-errors">
+            {% for e in form.ordem.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Salvar Categoria</button>
+        <a href="{% url 'cadastro_item' %}" class="btn btn-outline">Adicionar Item →</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  const iconeInput = document.getElementById('{{ form.icone.id_for_label }}');
+  const iconeDisplay = document.getElementById('icone-display');
+
+  function updatePreview() {
+    const val = iconeInput.value.trim();
+    iconeDisplay.textContent = val || '🍽️';
+    iconeDisplay.style.transform = 'scale(1.2)';
+    setTimeout(() => iconeDisplay.style.transform = '', 150);
+  }
+
+  iconeInput.addEventListener('input', updatePreview);
+  updatePreview();
+</script>
+{% endblock %}

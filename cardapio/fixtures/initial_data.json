@@ -1,0 +1,44 @@
+[
+  {
+    "model": "cardapio.categoria",
+    "pk": 1,
+    "fields": {
+      "nome": "Entradas",
+      "icone": "🥗",
+      "ordem": 1
+    }
+  },
+  {
+    "model": "cardapio.categoria",
+    "pk": 2,
+    "fields": {
+      "nome": "Pratos Principais",
+      "icone": "🍽️",
+      "ordem": 2
+    }
+  },
+  {
+    "model": "cardapio.itemcardapio",
+    "pk": 1,
+    "fields": {
+      "categoria": 1,
+      "nome": "Bruschetta ao Tomate",
+      "descricao": "Pão italiano grelhado com tomate e manjericão",
+      "preco": "18.90",
+      "disponivel": true,
+      "destaque": false
+    }
+  },
+  {
+    "model": "cardapio.itemcardapio",
+    "pk": 2,
+    "fields": {
+      "categoria": 2,
+      "nome": "Frango Grelhado",
+      "descricao": "Filé de frango grelhado com legumes",
+      "preco": "42.90",
+      "disponivel": true,
+      "destaque": true
+    }
+  }
+]
