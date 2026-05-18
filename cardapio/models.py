@@ -1,5 +1,3 @@
-from django.db import models
-
 # Create your models here.
 from django.db import models
 
@@ -27,4 +25,11 @@ class ItemCardapio(models.Model):
     destaque = models.BooleanField(default=False)
 
     def __str__(self):
+<<<<<<< HEAD
         return self.nome
+=======
+        return self.nome
+    
+def preco_formatado(self):
+    return f"R$ {self.preco:.2f}".replace('.', ',')
+>>>>>>> e52e147827374faca9c1550e8e413281bc3136cc

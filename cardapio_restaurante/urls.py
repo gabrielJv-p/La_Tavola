@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 URL configuration for cardapio_restaurante project.
 
@@ -15,8 +16,26 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('', include('cardapio.urls')),
 ]
+=======
+# cardapio_restaurante/urls.py  (urls do PROJETO)
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('cardapio.urls')),   # delega tudo para o app
+]
+
+# Serve arquivos de mídia (imagens) em desenvolvimento
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+>>>>>>> e52e147827374faca9c1550e8e413281bc3136cc

@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+
+{% block title %}Cardápio{% endblock %}
+
+{% block extra_head %}
+<style>
+
+  /* ── HERO ──────────────────────────────────────────────────── */
+  .hero {
+    background: var(--brown-dk);
+    border-radius: 8px;
+    padding: 3.5rem 2.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 24px var(--shadow);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 12px,
+        rgba(201,168,76,.04) 12px,
+        rgba(201,168,76,.04) 13px
+      );
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    font-family: 'IM Fell English SC', serif;
+    font-size: .78rem;
+    letter-spacing: .18em;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: .3rem 1rem;
+    border-radius: 2px;
+    margin-bottom: 1.2rem;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.4rem;
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: .6rem;
+  }
+  .hero h1 em { color: var(--gold-lt); font-style: italic; }
+  .hero p {
+    font-size: 1.05rem;
+    color: var(--parchment);
+    font-style: italic;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* ── DESTAQUES ─────────────────────────────────────────────── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+  }
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    color: var(--brown-dk);
+    white-space: nowrap;
+  }
+  .section-header h2 em { color: var(--red); font-style: italic; }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--parchment), transparent);
+  }
+  .section-icon { font-size: 1.3rem; }
+
+  .destaques-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .destaque-card {
+    background: var(--brown-dk);
+    border-radius: 6px;
+    padding: 1.4rem 1.5rem;
+    color: var(--cream);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 3px 16px rgba(62,44,20,.3);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .destaque-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(62,44,20,.38);
+  background-color: #7a5230;
+  transition: background-color .3s, transform .2s, box-shadow .2s;
+}
+  .destaque-card::after {
+    content: '★';
+    position: absolute;
+    top: .8rem;
+    right: 1rem;
+    color: var(--gold);
+    font-size: 1rem;
+  }
+  .destaque-card .dc-cat {
+    font-size: .75rem;
+    letter-spacing: .1em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: .5rem;
+    font-family: 'IM Fell English SC', serif;
+  }
+  .destaque-card .dc-nome {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    margin-bottom: .4rem;
+    line-height: 1.3;
+  }
+  .destaque-card .dc-desc {
+    font-size: .82rem;
+    color: var(--parchment);
+    font-style: italic;
+    line-height: 1.5;
+    margin-bottom: .9rem;
+  }
+  .destaque-card .dc-preco {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--gold-lt);
+  }
+  .destaque-card .dc-preco small { font-size: .75rem; font-family: 'Lora', serif; }
+
+  /* ── CATEGORIAS ────────────────────────────────────────────── */
+  .categoria-block { margin-bottom: 3rem; }
+
+  .cat-header {
+    display: flex;
+    align-items: baseline;
+    gap: .8rem;
+    padding-bottom: .7rem;
+    border-bottom: 2px solid var(--parchment);
+    margin-bottom: 1.3rem;
+  }
+  .cat-icon { font-size: 1.5rem; }
+  .cat-nome {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--brown-dk);
+  }
+  .cat-count {
+    font-size: .8rem;
+    color: var(--text-lt);
+    font-style: italic;
+  }
+
+  .itens-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 1rem;
+  }
+
+  .item-card {
+    background: #fff9f2;
+    border: 1px solid var(--cream-dk);
+    border-radius: 6px;
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    transition: box-shadow .2s, transform .2s;
+    position: relative;
+  }
+  .item-card:hover {
+    box-shadow: 0 4px 18px var(--shadow);
+    transform: translateY(-2px);
+  }
+  .item-card.destaque {
+    border-color: var(--gold);
+    border-left: 3px solid var(--gold);
+  }
+  .item-badge-destaque {
+    position: absolute;
+    top: .7rem;
+    right: .8rem;
+    background: var(--gold);
+    color: var(--brown-dk);
+    font-size: .68rem;
+    font-weight: 700;
+    padding: .15rem .5rem;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    font-family: 'IM Fell English SC', serif;
+  }
+  .item-nome {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    color: var(--brown-dk);
+    line-height: 1.3;
+    padding-right: 3rem;
+  }
+  .item-desc {
+    font-size: .85rem;
+    color: var(--text-md);
+    font-style: italic;
+    line-height: 1.55;
+    flex: 1;
+  }
+  .item-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: .4rem;
+    padding-top: .7rem;
+    border-top: 1px dashed var(--parchment);
+  }
+  .item-preco {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--red);
+  }
+  .item-preco small { font-size: .75rem; font-family: 'Lora', serif; color: var(--text-lt); }
+  .item-disponivel {
+    font-size: .78rem;
+    padding: .2rem .6rem;
+    border-radius: 20px;
+    letter-spacing: .04em;
+  }
+  .disponivel-sim { background: #edf7ed; color: #1e5c1e; }
+  .disponivel-nao { background: #f5f5f5; color: #888; }
+
+  /* ── EMPTY ─────────────────────────────────────────────────── */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-lt);
+    font-style: italic;
+  }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 2.2rem; }
+    .hero { padding: 2.2rem 1.2rem; }
+    .destaques-grid { grid-template-columns: 1fr; }
+    .itens-grid { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">✦ Nosso Cardápio ✦</div>
+    <h1>Uma viagem de<br><em>sabores e aromas</em></h1>
+    <p>Preparados com carinho e ingredientes selecionados para a sua mesa.</p>
+  </div>
+
+  <!-- DESTAQUES -->
+  {% if destaques %}
+  <section aria-label="Destaques da casa">
+    <div class="section-header">
+      <span class="section-icon">⭐</span>
+      <h2>Destaques <em>da Casa</em></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="destaques-grid">
+      {% for item in destaques %}
+      <div class="destaque-card">
+        <div class="dc-cat">{{ item.categoria.icone }} {{ item.categoria.nome }}</div>
+        <div class="dc-nome">{{ item.nome }}</div>
+        <div class="dc-desc">{{ item.descricao }}</div>
+        <div class="dc-preco"><small>R$</small> {{ item.preco }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- CARDÁPIO POR CATEGORIA -->
+  <section aria-label="Cardápio completo">
+    <div class="section-header">
+      <span class="section-icon">🍽️</span>
+      <h2>Cardápio <em>Completo</em></h2>
+      <div class="section-line"></div>
+    </div>
+
+    {% if categorias %}
+      {% for categoria in categorias %}
+      <div class="categoria-block">
+        <div class="cat-header">
+          <span class="cat-icon">{{ categoria.icone }}</span>
+          <span class="cat-nome">{{ categoria.nome }}</span>
+          <span class="cat-count">{{ categoria.itens.count }} item{% if categoria.itens.count != 1 %}s{% endif %}</span>
+        </div>
+
+        <div class="itens-grid">
+          {% for item in categoria.itens.all %}
+          {% if item.disponivel %}
+          <div class="item-card {% if item.destaque %}destaque{% endif %}">
+            {% if item.destaque %}
+              <span class="item-badge-destaque">★ Destaque</span>
+            {% endif %}
+            <div class="item-nome">{{ item.nome }}</div>
+            <div class="item-desc">{{ item.descricao }}</div>
+            <div class="item-footer">
+              <div class="item-preco"><small>R$</small> {{ item.preco }}</div>
+              <span class="item-disponivel disponivel-sim">✓ Disponível</span>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <p>Nenhum item disponível no cardápio ainda.</p>
+        <br>
+        <a href="{% url 'cadastro_item' %}" class="btn btn-primary">Adicionar primeiro item</a>
+      </div>
+    {% endif %}
+  </section>
+
+  <script>
+  document.querySelectorAll('.destaque-card').forEach(card => {
+    const corOriginal = '#3e2c14';
+    const corHover    = '#7a5230';
+
+    card.addEventListener('mouseenter', () => {
+      card.style.backgroundColor = corHover;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.backgroundColor = corOriginal;
+    });
+  });
+</script>
+{% endblock %}
